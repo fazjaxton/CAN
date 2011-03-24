@@ -24,7 +24,7 @@ enum {
 #define TX		0x30
 #define RX		0x60
 
-#define SYNC_JUMP_WIDTH	0
+#define SYNC_JUMP_WIDTH	1
 #define BR_PRESCALER	0
 
 /* Sync (1) + These lengths = 16;  16 * Tq = Nominal Bit Time */
@@ -173,16 +173,16 @@ void CANClass::begin() {
 
 	mcp2515_write_reg (CNF1,
 			(BR_PRESCALER << BRP) |
-			(SYNC_JUMP_WIDTH << SJW) );
+			((SYNC_JUMP_WIDTH - 1) << SJW) );
 
 	mcp2515_write_reg (CNF2,
-			(PROP_SEG_LEN << PRSEG) |
-			(PHASE_SEG_1_LEN << PHSEG1) |
+			((PROP_SEG_LEN - 1) << PRSEG) |
+			((PHASE_SEG_1_LEN - 1) << PHSEG1) |
 			(0 << SAM) |  /* Sample once */
 			(1 << BTLMODE) );  /* Phase 2 set by CNF3 */
 
 	mcp2515_write_reg (CNF3,
-			(PHASE_SEG_2_LEN << PHSEG2) |
+			((PHASE_SEG_2_LEN - 1) << PHSEG2) |
 			(0 << WAKFIL) );
 
 	mcp2515_write_reg (REG(RX, 0, CTRL),
