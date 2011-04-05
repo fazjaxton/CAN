@@ -5,9 +5,7 @@
  * CAN bus and prints out the IDs and data fields of
  * any CAN messages it hears.  */
 
-byte len;
-byte data[8];
-short id;
+CanMessage message;
 byte i;
 
 void setup()
@@ -20,14 +18,13 @@ void setup()
 void loop()
 {
   if (CAN.available()) {
-    id = CAN.getMessageID ();
-    Serial.print (id, HEX);
+    message = CAN.getMessage ();
+    Serial.print (message.id, HEX);
     Serial.print (":");
 
-    len = CAN.receiveData (data, 8);
-    for (i=0; i<len; i++) {
+    for (i=0; i<message.len; i++) {
       Serial.print (' ');
-      Serial.print (data[i], HEX);
+      Serial.print (message.data[i], HEX);
     }
     Serial.println ("");
   }

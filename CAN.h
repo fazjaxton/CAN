@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2011 by Kevin Smith <faz@fazjaxton.net>
- * CAN Library for Arduino
+ * Copyright (c) 2010-2011 by Kevin Smith <faz@fazjaxton.net>
+ * MCP2515 CAN library for arduino.
  *
  * This file is free software; you can redistribute it and/or modify
- * it under the terms of either the GNU General Public License version 2
- * or the GNU Lesser General Public License version 2.1, both as
- * published by the Free Software Foundation.
+ * it under the terms of either the GNU General Public License version 3
+ * as published by the Free Software Foundation.
  */
 
 #ifndef CAN_h
 #define CAN_h
 
-#include <SPI.h>
 #include <inttypes.h>
+#include <WProgram.h>
+
 #define DEFAULT_CAN_ID	0x0555
 
 /* Operation Modes */
@@ -27,6 +27,37 @@ enum {
 	CAN_MODE_COUNT
 };
 
+class CanMessage {
+    public:
+        uint8_t extended;
+        uint32_t id;
+        uint8_t len;
+        uint8_t data[8];
+
+        CanMessage();
+
+        /* Functions to copy different data types into the message */
+        void setByteData (byte b);
+        void setIntData (int i);
+        void setLongData (long l);
+
+        /* Conveneince functions for copying strings and byte arrays */
+        void setData (const uint8_t *data, uint8_t len);
+        void setData (const char *data, uint8_t len);
+
+        /* Send a message */
+        void send();
+
+        /* Functions to retrieve different data types from the message */
+        byte getByteFromData ();
+        int getIntFromData ();
+        long getLongFromData ();
+
+        /* Conveneince functions for copying strings and byte arrays */
+        void getData (uint8_t *data);
+        void getData (char *data);
+};
+
 class CANClass {
 	public:
 		/* Called before any other CAN functions are used */
@@ -37,38 +68,11 @@ class CANClass {
 		/* Set operational mode; pass in one of the modes enumerated above */
 		static void setMode(uint8_t);
 
-		/* Set the message ID for outgoing messages */
-		static void setMessageID(uint16_t);
-
-		/* Send a single byte of data in a CAN message */
-		static void sendByte(uint8_t);
-		/* Send an integer value in a CAN message */
-		static void sendInt(uint16_t);
-		/* Send a long value in a CAN message */
-		static void sendLong(uint32_t);
-		/* Send a custom data buffer in a CAN message */
-		static void sendData(const uint8_t *, uint8_t);
-		static void sendData(const char *, uint8_t);
-
 		/* Check whether received CAN data is available */
-		static uint8_t available();
-		/* Read the ID of the received message */
-		static uint16_t getMessageID(void);
+        static uint8_t available ();
 
-		/* Receive a single byte of data */
-		static uint8_t receiveByte(void);
-		/* Receive an integer value */
-		static uint16_t receiveInt(void);
-		/* Receive a long value */
-		static uint32_t receiveLong(void);
-		/* Receive a custom data buffer */
-		static uint8_t receiveData(uint8_t *, uint8_t);
-		static uint8_t receiveData(char *, uint8_t);
-
-		/* Mark a message as received.  This is only necessary if you want
-		 * to ignore a message or only read its ID.  All of the receive
-		 * functions do this automatically. */
-		static void markReceived (void);
+        /* Recieve a CAN message */
+        static CanMessage getMessage ();
 };
 
 extern CANClass CAN;
