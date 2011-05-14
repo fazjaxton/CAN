@@ -11,8 +11,8 @@
 #if ! ARDUINO
 #include <avr/io.h>
 
-#define SS_PORT     PORTB
-#define SS_PIN      PORTB2
+#define SS_PORT     (PORTB)
+#define SS_PIN      (1 << PORTB2)
 
 enum {
     SPI_MODE_0 = 0x0,
