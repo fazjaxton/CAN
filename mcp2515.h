@@ -35,6 +35,7 @@ static inline void mcp2515_set_msg_ext (uint8_t tx_buf, uint32_t id,
 
 void mcp2515_request_tx (uint8_t tx_buf);
 uint8_t mcp2515_msg_received (void);
+uint8_t mcp2515_msg_sent (void);
 
 void mcp2515_set_rx_mask (uint8_t mask_num, uint32_t mask, uint8_t extended);
 void mcp2515_set_rx_filter (uint8_t filter_num, uint32_t filter, uint8_t extended);
