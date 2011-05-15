@@ -28,7 +28,7 @@ CanMessage receiveMessage;
 
 void setup()
 {
-  CAN.begin ();
+  CAN.begin (CAN_SPEED_500000);
   CAN.setMode (CAN_MODE_NORMAL);
   Serial.begin (115200);
   

@@ -9,7 +9,6 @@
 
 #include "CAN.h"
 #include <SPI.h>
-#include "mcp2515.h"
 
 /*
  * CanMessage Class
@@ -114,13 +113,13 @@ void CanMessage::getData (char *data)
 /*
  * CANClass
  */
-void CANClass::begin() {
+void CANClass::begin(uint8_t speed) {
 	SPI.begin();
 	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-	mcp2515_init ();
+	mcp2515_init (speed);
 }
 
 void CANClass::end() {

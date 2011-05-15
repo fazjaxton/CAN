@@ -2,10 +2,6 @@
 #include "mcp2515_regs.h"
 #include "my_spi.h"
 
-/* Not compensated, this is the register value, not actual
- * prescaling value */
-#define BR_PRESCALER    0
-
 #define SYNC_JUMP_WIDTH 1
 
 /* Sync (1) + These lengths = 16;  16 * Tq = Nominal Bit Time */
@@ -69,10 +65,10 @@ static void mcp2515_bit_modify (uint8_t addr, uint8_t mask, uint8_t bits)
 /*
  * Initialize the MCP2515
  */
-void mcp2515_init (void)
+void mcp2515_init (uint8_t speed)
 {
     mcp2515_write_reg (CNF1,
-            (BR_PRESCALER << BRP) |
+            (speed << BRP) |
             ((SYNC_JUMP_WIDTH - 1) << SJW) );
 
     mcp2515_write_reg (CNF2,

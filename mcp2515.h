@@ -10,7 +10,20 @@
 #define MCP2515_MODE_LISTEN_ONLY    0x03
 #define MCP2515_MODE_CONFIG         0x04
 
-void mcp2515_init (void);
+enum {
+    MCP2515_SPEED_500000 = 0,
+    MCP2515_SPEED_250000 = 1,
+    MCP2515_SPEED_125000 = 3,
+    MCP2515_SPEED_100000 = 4,
+    MCP2515_SPEED_62500 = 7,
+    MCP2515_SPEED_50000 = 9,
+    MCP2515_SPEED_31250 = 15,
+    MCP2515_SPEED_25000 = 19,
+    MCP2515_SPEED_20000 = 24,
+    MCP2515_SPEED_15625 = 31
+};
+
+void mcp2515_init (uint8_t speed);
 
 void mcp2515_read_regs (uint8_t addr, uint8_t* buf, uint8_t n);
 void mcp2515_write_regs (uint8_t addr, const uint8_t* buf, uint8_t n);

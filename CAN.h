@@ -12,6 +12,7 @@
 
 #include <inttypes.h>
 #include <WProgram.h>
+#include "mcp2515.h"
 
 #define DEFAULT_CAN_ID	0x0555
 
@@ -25,6 +26,20 @@ enum {
 	CAN_MODE_CONFIG,		/* Default; Allows writing to config registers */
 
 	CAN_MODE_COUNT
+};
+
+/* Supported speeds in bits per second */
+enum {
+    CAN_SPEED_500000            = MCP2515_SPEED_500000,
+    CAN_SPEED_250000            = MCP2515_SPEED_250000,
+    CAN_SPEED_125000            = MCP2515_SPEED_125000,
+    CAN_SPEED_100000            = MCP2515_SPEED_100000,
+    CAN_SPEED_62500             = MCP2515_SPEED_62500,
+    CAN_SPEED_50000             = MCP2515_SPEED_50000,
+    CAN_SPEED_31250             = MCP2515_SPEED_31250,
+    CAN_SPEED_25000             = MCP2515_SPEED_25000,
+    CAN_SPEED_20000             = MCP2515_SPEED_20000,
+    CAN_SPEED_15625             = MCP2515_SPEED_15625,
 };
 
 class CanMessage {
@@ -60,8 +75,9 @@ class CanMessage {
 
 class CANClass {
 	public:
-		/* Called before any other CAN functions are used */
-		static void begin();
+		/* Called before any other CAN functions are used; argument
+         * specifies speed to be one the the CAN_SPEED values above. */
+		static void begin(uint8_t);
 		/* Called when all CAN functions are complete */
 		static void end();
 

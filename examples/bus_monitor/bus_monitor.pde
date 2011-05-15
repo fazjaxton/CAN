@@ -10,7 +10,7 @@ byte i;
 
 void setup()
 {
-  CAN.begin();
+  CAN.begin(CAN_SPEED_500000);
   CAN.setMode (CAN_MODE_LISTEN_ONLY);
   Serial.begin(115200);
 }
