@@ -68,6 +68,9 @@ class CANClass {
 		/* Set operational mode; pass in one of the modes enumerated above */
 		static void setMode(uint8_t);
 
+        /* Check whether a message may be sent */
+        static uint8_t ready ();
+
 		/* Check whether received CAN data is available */
         static uint8_t available ();
 

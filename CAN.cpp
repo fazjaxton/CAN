@@ -132,6 +132,11 @@ void CANClass::setMode (uint8_t mode)
 	mcp2515_set_mode (mode);
 }
 
+uint8_t CANClass::ready ()
+{
+	return mcp2515_msg_sent ();
+}
+
 uint8_t CANClass::available ()
 {
 	return mcp2515_msg_received();
