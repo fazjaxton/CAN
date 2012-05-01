@@ -65,8 +65,10 @@ void CanMessage::setData (const char *data, uint8_t len)
 
 void CanMessage::send ()
 {
-	mcp2515_set_msg (0, id, data, len, extended);
-	mcp2515_request_tx (0);
+        static int i;
+        int buf = i++ % 3; // use the 3 TX buffers in a round-robin fashion
+        mcp2515_msg_set (buf, id, data, len, extended);
+        mcp2515_set_tx (buf);
 }
 
 byte CanMessage::getByteFromData()
