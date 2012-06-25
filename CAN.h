@@ -17,7 +17,7 @@
 #define DEFAULT_CAN_ID	0x0555
 
 /* Operation Modes */
-enum {
+enum CAN_MODE {
 	CAN_MODE_NORMAL, 		/* Transmit and receive as normal */
 	CAN_MODE_SLEEP,			/* Low power mode */
 	CAN_MODE_LOOPBACK,		/* Test mode; anything "sent" appears in the
@@ -29,7 +29,7 @@ enum {
 };
 
 /* Supported speeds in bits per second */
-enum {
+enum CAN_SPEED {
     CAN_SPEED_500000            = MCP2515_SPEED_500000,
     CAN_SPEED_250000            = MCP2515_SPEED_250000,
     CAN_SPEED_125000            = MCP2515_SPEED_125000,
@@ -42,55 +42,135 @@ enum {
     CAN_SPEED_15625             = MCP2515_SPEED_15625,
 };
 
+/**
+ * A class representing a single CAN message.  The message can be built
+ * using the send<Type>Data functions, or the bytes of the message can
+ * be set directly by accessing the public data[] array.  This class is
+ * also used to retrieve a message that has been received.  The data
+ * can be read using the get<type>Data functions, or can be read directly
+ * by accessing the public data[] array.
+ */
 class CanMessage {
     public:
+        /** A flag indicating whether this is an extended CAN message */
         uint8_t extended;
+        /** The ID of the CAN message */
         uint32_t id;
+        /** The number of bytes in the data field (0-8) */
         uint8_t len;
+        /** Array containing the bytes of the CAN message */
         uint8_t data[8];
 
         CanMessage();
 
-        /* Functions to copy different data types into the message */
+        /**
+         * Simple interface to set up a CAN message for sending a byte data
+         * type.  When received, this message should be unpacked with the
+         * getByteData function.  This interface only allows one byte to be
+         * packed into a message.  To pack more data, access the data array
+         * directly.
+         * @param b - The byte to pack into the message.
+         */
         void setByteData (byte b);
+
+        /**
+         * Simple interface to set up a CAN message for sending an int data
+         * type.  When received, this message should be unpacked with the
+         * getIntData function.  This interface only allows one int to be
+         * packed into a message.  To pack more data, access the data array
+         * directly.
+         * @param i - The int to pack into the message.
+         */
         void setIntData (int i);
+
+        /**
+         * Simple interface to set up a CAN message for sending a long data
+         * type.  When received, this message should be unpacked with the
+         * getLongData function.  This interface only allows one long to be
+         * packed into a message.  To pack more data, access the data array
+         * directly.
+         * @param l - The long to pack into the message.
+         */
         void setLongData (long l);
 
-        /* Conveneince functions for copying strings and byte arrays */
+        /**
+         * A convenience function for copying multiple bytes of data into
+         * the message.
+         * @param data - The data to be copied into the message
+         * @param len  - The size of the data
+         */
         void setData (const uint8_t *data, uint8_t len);
         void setData (const char *data, uint8_t len);
 
-        /* Send a message */
+        /**
+         * Send the CAN message.  Once a message has been created, this
+         * function sends it.
+         */
         void send();
 
-        /* Functions to retrieve different data types from the message */
+        /**
+         * Simple interface to retrieve a byte from a CAN message.  This
+         * should only be used on messages that were created using the
+         * setByteData function on another node.
+         * @return The byte contained in the message.
+         */
         byte getByteFromData ();
+
+        /**
+         * Simple interface to retrieve an int from a CAN message.  This
+         * should only be used on messages that were created using the
+         * setIntData function on another node.
+         * @return The int contained in the message.
+         */
         int getIntFromData ();
+
+        /**
+         * Simple interface to retrieve a long from a CAN message.  This
+         * should only be used on messages that were created using the
+         * setLongData function on another node.
+         * @return The long contained in the message.
+         */
         long getLongFromData ();
 
-        /* Conveneince functions for copying strings and byte arrays */
+        /**
+         * A convenience function for copying multiple bytes out of a
+         * CAN message.
+         * @param data - The location to copy the data to.
+         */
         void getData (uint8_t *data);
         void getData (char *data);
 };
 
 class CANClass {
 	public:
-		/* Called before any other CAN functions are used; argument
-         * specifies speed to be one the the CAN_SPEED values above. */
-		static void begin(uint8_t);
-		/* Called when all CAN functions are complete */
+		/**
+         * Call before using any other CAN functions.
+         * @param speed - Desired bus speed.  Should be one of the
+         *                CAN_SPEED enumerated values.
+         */
+		static void begin(uint8_t speed);
+
+		/** Call when all CAN functions are complete */
 		static void end();
 
-		/* Set operational mode; pass in one of the modes enumerated above */
-		static void setMode(uint8_t);
+		/**
+         * Set operational mode.
+         * @param mode - One of the CAN_MODE enumerated values */
+		static void setMode(uint8_t mode);
 
-        /* Check whether a message may be sent */
+        /** Check whether a message may be sent */
         static uint8_t ready ();
 
-		/* Check whether received CAN data is available */
-        static uint8_t available ();
+		/**
+         * Check whether received CAN data is available.
+         * @return True if a message is available to be retrieved.
+         */
+        static boolean available ();
 
-        /* Recieve a CAN message */
+        /**
+         * Retrieve a CAN message.
+         * @return A CanMessage containing the retrieved message
+         */
         static CanMessage getMessage ();
 };
 

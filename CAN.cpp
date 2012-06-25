@@ -10,9 +10,6 @@
 #include "CAN.h"
 #include <SPI.h>
 
-/*
- * CanMessage Class
- */
 CanMessage::CanMessage ()
 {
     extended = 0;
@@ -136,9 +133,9 @@ uint8_t CANClass::ready ()
 	return mcp2515_msg_sent ();
 }
 
-uint8_t CANClass::available ()
+boolean CANClass::available ()
 {
-	return mcp2515_msg_received();
+	return (boolean)mcp2515_msg_received();
 }
 
 CanMessage CANClass::getMessage ()

@@ -9,8 +9,10 @@
 #ifndef __MCP2515_REGS__
 #define __MCP2515_REGS__
 
+/* Defines a field mask of width w */
 #define FIELD_MASK(w)   ((1 << w) - 1)
 
+/* Registers and bits */
 #define RXM0SIDH    0x20
 #define RXM1SIDH    0x24
 
@@ -49,7 +51,15 @@
 #define RX1IF       1
 #define RX0IF       0
 
-#define REG(d,n,r)  ((d + (n << 4)) | r)
+/**
+ * For registers that are duplicated across multiple RX and TX buffers,
+ * use the REG macro.
+ * @param dir - Direction, either "RX" or "TX"
+ * @param num - Number of the buffer, 0 or 1 for RX; 0, 1, or 2 for TX.
+ * @param reg - The register of the buffer, defined below.
+ * @return The address of the register
+ */
+#define REG(dir,num,reg)  (((dir) + ((num) << 4)) | (reg))
 #define TX          0x30
 #define RX          0x60
 

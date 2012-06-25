@@ -8,7 +8,9 @@
 
 #include "my_spi.h"
 
+/* Don't build this file if for the Arduino */
 #if ! ARDUINO
+
 #include <avr/io.h>
 
 #define SS_PORT     (PORTB)
@@ -49,18 +51,18 @@ void init_spi (void)
 {
     deassert_ss();
 
-    DDRB |=   (1 << DDB5)    /* SCK output */
-        | (1 << DDB3)    /* MOSI output */
-        | (1 << DDB2);   /* ~SS output */
+    DDRB |= (1 << DDB5)    /* SCK output */
+          | (1 << DDB3)    /* MOSI output */
+          | (1 << DDB2);   /* ~SS output */
 
-    SPSR |=   (0 << SPI2X);  /* 2X clock speed */
+    SPSR |= (0 << SPI2X);  /* 2X clock speed */
 
-    SPCR =    (0 << SPIE)    /* Interrupt enable */
-        | (1 << SPE)     /* SPI enable */
-        | (0 << DORD)    /* MSB first */
-        | (1 << MSTR)    /* Master mode */
-        | (SPI_MODE_0 << CPHA)  /* Mode 0 */
-        | (1 << SPR0);   /* Fosc / 4   */
+    SPCR =  (0 << SPIE)    /* Interrupt enable */
+         |  (1 << SPE)     /* SPI enable */
+         |  (0 << DORD)    /* MSB first */
+         |  (1 << MSTR)    /* Master mode */
+         |  (SPI_MODE_0 << CPHA)  /* Mode 0 */
+         |  (1 << SPR0);   /* Fosc / 4   */
 }
 #endif
 
