@@ -1,6 +1,13 @@
+/**
+ * @file mcp2515.cpp
+ * MCP2515 driver.  This file is straight C code, and can be renamed to .c
+ * to use it in a C project.  It is named .cpp so that it will be built by
+ * the Arduino build system.
+ */
 #include "mcp2515.h"
 #include "mcp2515_regs.h"
 #include "my_spi.h"
+
 
 #define SYNC_JUMP_WIDTH 1
 
@@ -62,9 +69,6 @@ static void mcp2515_bit_modify (uint8_t addr, uint8_t mask, uint8_t bits)
     deassert_ss();
 }
 
-/*
- * Initialize the MCP2515
- */
 void mcp2515_init (uint8_t speed)
 {
     mcp2515_write_reg (CNF1,

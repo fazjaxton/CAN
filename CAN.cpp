@@ -7,6 +7,10 @@
  * as published by the Free Software Foundation.
  */
 
+/**
+ * @file CAN.cpp
+ * Arduino interface into the CAN driver.
+ */
 #include "CAN.h"
 #include <SPI.h>
 

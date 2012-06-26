@@ -1,6 +1,11 @@
 #ifndef __MCP2515_H__
 #define __MCP2515_H__
 
+/**
+ * @file mcp2515.h
+ * MCP2515 driver header.
+ */
+
 #include <stdint.h>
 
 /* Operation Modes */
@@ -107,15 +112,15 @@ void mcp2515_request_tx (uint8_t tx_buf);
 
 /**
  * Check to see if a message has been received
- * @return - Zero if no message has been received.  If a message is available
- *           in receive buffer 0, bit 0 will be set, and if a message is
- *           available in receive buffer 1, bit 1 will be set.
+ * @return Zero if no message has been received.  If a message is available
+ *         in receive buffer 0, bit 0 will be set, and if a message is
+ *         available in receive buffer 1, bit 1 will be set.
  */
 uint8_t mcp2515_msg_received (void);
 
 /**
  * Check to see if a message has been sent
- * @return - Zero if the message has not been sent, nonzero otherwise.
+ * @return Zero if the message has not been sent, nonzero otherwise.
  */
 uint8_t mcp2515_msg_sent (void);
 

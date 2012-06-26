@@ -7,6 +7,10 @@
  * as published by the Free Software Foundation.
  */
 
+/**
+ * @file CAN.h
+ * Include file for Arduino-based CAN projects.
+ */
 #ifndef CAN_h
 #define CAN_h
 
@@ -54,11 +58,15 @@ class CanMessage {
     public:
         /** A flag indicating whether this is an extended CAN message */
         uint8_t extended;
-        /** The ID of the CAN message */
+        /** The ID of the CAN message.  The ID is 29 bytes long if the
+          * extended flag is set, or 11 bytes long if not set. */
         uint32_t id;
         /** The number of bytes in the data field (0-8) */
         uint8_t len;
-        /** Array containing the bytes of the CAN message */
+        /** Array containing the bytes of the CAN message.  This array
+          * may be accessed directly to set or read the CAN message.
+          * This field can also be set by the setTypeData functions and
+          * read by the getTypeData functions. */
         uint8_t data[8];
 
         CanMessage();
