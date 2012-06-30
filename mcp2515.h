@@ -16,27 +16,28 @@
 #define MCP2515_MODE_CONFIG         0x04
 
 /**
- * CAN bus speeds.  These are speeds that are natural divisors of the
- * 16 MHz clock speed and 16 time-quanta CAN bit configuration.
+ * CAN bus speeds.  These are the bit-times for common frequencies.
  */
 enum {
-    MCP2515_SPEED_500000 = 0,
-    MCP2515_SPEED_250000 = 1,
-    MCP2515_SPEED_125000 = 3,
-    MCP2515_SPEED_100000 = 4,
-    MCP2515_SPEED_62500 = 7,
-    MCP2515_SPEED_50000 = 9,
-    MCP2515_SPEED_31250 = 15,
-    MCP2515_SPEED_25000 = 19,
-    MCP2515_SPEED_20000 = 24,
-    MCP2515_SPEED_15625 = 31
+    MCP2515_SPEED_500000 = 2000,
+    MCP2515_SPEED_250000 = 4000,
+    MCP2515_SPEED_125000 = 8000,
+    MCP2515_SPEED_100000 = 10000,
+    MCP2515_SPEED_62500  = 16000,
+    MCP2515_SPEED_50000  = 20000,
+    MCP2515_SPEED_31250  = 32000,
+    MCP2515_SPEED_25000  = 40000,
+    MCP2515_SPEED_20000  = 50000,
+    MCP2515_SPEED_15625  = 64000
 };
 
 /**
  * Initialize the MCP2515.
- * @param speed - One of the CAN speeds enumerated above.
+ * @param bit_period - The length of the desired bit period.  The closest
+ *                     possible approximation will be made.  Commonly used
+ *                     frequencies are specified in the MCP2515_SPEED enums.
  */
-void mcp2515_init (uint8_t speed);
+void mcp2515_init (uint32_t bit_period);
 
 /**
  * Read registers from the MCP2515.

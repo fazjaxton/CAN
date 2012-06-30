@@ -114,13 +114,13 @@ void CanMessage::getData (char *data)
 /*
  * CANClass
  */
-void CANClass::begin(uint8_t speed) {
+void CANClass::begin(uint32_t bit_time) {
 	SPI.begin();
 	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-	mcp2515_init (speed);
+	mcp2515_init (bit_time);
 }
 
 void CANClass::end() {

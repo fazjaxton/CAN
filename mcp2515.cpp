@@ -9,12 +9,22 @@
 #include "my_spi.h"
 
 
+/** For each increment of the BRP, our time quanta goes up this many
+  * nanoseconds (for our 16MHz crystal) */
+#define TIME_QUANTUM_STEP            125
+
+/** The minimum bit width in time quanta (1, 1, 1, 2) */
+#define QUANTUM_WIDTH_MIN           5
+
+/** The maximum bit width in time quanta (1, 8, 8, 8) */
+#define QUANTUM_WIDTH_MAX           25
+
+/** The highest possible BRP value */
+#define BRP_MAX               63
+
+/** The SYNC_JUMP_WIDTH is always 1 time quantum */
 #define SYNC_JUMP_WIDTH 1
 
-/* Sync (1) + These lengths = 16;  16 * Tq = Nominal Bit Time */
-#define PROP_SEG_LEN    5
-#define PHASE_SEG_1_LEN 5
-#define PHASE_SEG_2_LEN 5
 
 /* SPI Commands */
 enum {
@@ -69,26 +79,113 @@ static void mcp2515_bit_modify (uint8_t addr, uint8_t mask, uint8_t bits)
     deassert_ss();
 }
 
-void mcp2515_init (uint8_t speed)
+/**
+ * Find the best prescalar and bit width in time quanta for the given bit
+ * period.  This algorithm favors lower prescalars and therefore higher
+ * frequencies and more time quanta per bit.
+ * @param bit_period - Length of bit period in nanoseconds
+ * @param bit_width  - Pointer to the location to store the bit width
+ * return - The best prescalar
+ */
+static uint8_t calc_brp (uint32_t bit_period, uint8_t *bit_width)
 {
+    uint32_t total_steps;
+    uint16_t brp_min;
+    uint16_t brp_max;
+    uint8_t error;
+    uint8_t best_width;
+    uint8_t best_brp;
+    uint8_t best_error = BRP_MAX;
+    uint8_t i;
+
+    /* Calculate the minimum BRP that can meet this rate */
+    brp_min = bit_period / (QUANTUM_WIDTH_MAX * TIME_QUANTUM_STEP);
+    /* Calculate the maximum BRP that can meet this rate */
+    brp_max = bit_period / (QUANTUM_WIDTH_MIN * TIME_QUANTUM_STEP);
+
+    /* Don't check outside the valid range */
+    if (brp_min > BRP_MAX)
+        brp_min = BRP_MAX;
+    if (brp_max > BRP_MAX)
+        brp_max = BRP_MAX;
+
+    total_steps = bit_period / TIME_QUANTUM_STEP;
+
+    for (i = brp_min; i <= brp_max; i++) {
+        error = total_steps % (i + 1);
+
+        /* If the number of quanta that make the correct bit rate at this
+         * prescalar is an integer, this is an exact match. */
+        if (error == 0) {
+            best_brp = i;
+            best_width = total_steps / (i + 1);
+            break;
+        }
+
+        /* If rounding up, the error is the difference between the divisor
+         * and the remainder */
+        if ((i + 1) - error < error) {
+            error = (i + 1) - error;
+        }
+
+        /* Store the settings at this BRP if they are the best yet */
+        if (error < best_error) {
+            best_error = error;
+            best_width = (total_steps + ((i + 1) >> 1))/ (i + 1);
+            best_brp = i;
+        }
+    }
+
+    /* Return the best match */
+    *bit_width = best_width;
+    return best_brp;
+}
+
+
+void mcp2515_init (uint32_t bit_period)
+{
+    uint8_t brp;
+    uint8_t bit_width;
+    uint8_t prop_seg;
+    uint8_t phase_1_seg;
+    uint8_t phase_2_seg;
+
+    /* Calculate BRP and bit width */
+    brp = calc_brp (bit_period, &bit_width);
+
+    if (bit_width < QUANTUM_WIDTH_MIN)
+        bit_width = QUANTUM_WIDTH_MIN;
+
+    /* Calculate segment widths based on bit width.  This algorithm keeps
+     * the segments as even as possible, favoring phase2, then phase1
+     * to be bigger. */
+    phase_2_seg = (bit_width + 1) / 3;
+    bit_width -= phase_2_seg;
+
+    phase_1_seg = bit_width >> 1;
+
+    prop_seg = bit_width - phase_1_seg - 1;
+
+    /* Set registers */
     mcp2515_write_reg (CNF1,
-            (speed << BRP) |
+            (brp << BRP) |
             ((SYNC_JUMP_WIDTH - 1) << SJW) );
 
     mcp2515_write_reg (CNF2,
-            ((PROP_SEG_LEN - 1) << PRSEG) |
-            ((PHASE_SEG_1_LEN - 1) << PHSEG1) |
+            ((prop_seg - 1) << PRSEG) |
+            ((phase_1_seg - 1) << PHSEG1) |
             (0 << SAM) |  /* Sample once */
             (1 << BTLMODE) );  /* Phase 2 set by CNF3 */
 
     mcp2515_write_reg (CNF3,
-            ((PHASE_SEG_2_LEN - 1) << PHSEG2) |
+            ((phase_2_seg - 1) << PHSEG2) |
             (0 << WAKFIL) );
 
     mcp2515_write_reg (REG(RX, 0, CTRL),
             (0x0 << RXM) |
             (0 << BUKT) );
 }
+
 
 /*
  * Set the operating mode of the MCP2515

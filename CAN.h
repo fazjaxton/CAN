@@ -153,10 +153,11 @@ class CANClass {
 	public:
 		/**
          * Call before using any other CAN functions.
-         * @param speed - Desired bus speed.  Should be one of the
-         *                CAN_SPEED enumerated values.
+         * @param bit_time - Desired width of a single bit in nanoseconds.
+         *                   The CAN_SPEED enumerated values are set to
+         *                   the bit widths of some common frequencies.
          */
-		static void begin(uint8_t speed);
+		static void begin(uint32_t bit_time);
 
 		/** Call when all CAN functions are complete */
 		static void end();
