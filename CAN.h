@@ -11,6 +11,8 @@
  * @file CAN.h
  * Include file for Arduino-based CAN projects.
  */
+
+
 #ifndef CAN_h
 #define CAN_h
 
@@ -20,19 +22,22 @@
 
 #define DEFAULT_CAN_ID	0x0555
 
-/* Operation Modes */
+/** Operation Modes of the MCP2515 */
 enum CAN_MODE {
-	CAN_MODE_NORMAL, 		/* Transmit and receive as normal */
-	CAN_MODE_SLEEP,			/* Low power mode */
-	CAN_MODE_LOOPBACK,		/* Test mode; anything "sent" appears in the
-							 *  receive buffer without external signaling */
-	CAN_MODE_LISTEN_ONLY,   /* Receive only; do not transmit */
-	CAN_MODE_CONFIG,		/* Default; Allows writing to config registers */
+	CAN_MODE_NORMAL, 		/**< Transmit and receive as normal */
+	CAN_MODE_SLEEP,			/**< Low power mode */
+	CAN_MODE_LOOPBACK,		/**< Test mode; any CAN messages sent are not
+                              *  transmitted on the CAN network, but instead
+                              *  appear in the receive buffer as though they
+                              *  were received from another CAN node. */
+	CAN_MODE_LISTEN_ONLY,   /**< Receive only; do not transmit or otherwise
+                              *  interact with the CAN network. */
+	CAN_MODE_CONFIG,		/**< Default; Allows writing to config registers */
 
 	CAN_MODE_COUNT
 };
 
-/* Supported speeds in bits per second */
+/** Predefined CAN speeds - Included mostly for backward compatibility */
 enum CAN_SPEED {
     CAN_SPEED_500000            = MCP2515_SPEED_500000,
     CAN_SPEED_250000            = MCP2515_SPEED_250000,
@@ -47,26 +52,23 @@ enum CAN_SPEED {
 };
 
 /**
- * A class representing a single CAN message.  The message can be built
- * using the send<Type>Data functions, or the bytes of the message can
- * be set directly by accessing the public data[] array.  This class is
- * also used to retrieve a message that has been received.  The data
- * can be read using the get<type>Data functions, or can be read directly
- * by accessing the public data[] array.
+ * A class representing a single CAN message.
+ * This class is used to build a message to be sent, and to read messages
+ * that have been received.
  */
 class CanMessage {
     public:
         /** A flag indicating whether this is an extended CAN message */
         uint8_t extended;
-        /** The ID of the CAN message.  The ID is 29 bytes long if the
-          * extended flag is set, or 11 bytes long if not set. */
+        /** The identifier of the CAN message.  The ID is 29 bytes long
+          * if the extended flag is set, or 11 bytes long if not set. */
         uint32_t id;
         /** The number of bytes in the data field (0-8) */
         uint8_t len;
         /** Array containing the bytes of the CAN message.  This array
           * may be accessed directly to set or read the CAN message.
-          * This field can also be set by the setTypeData functions and
-          * read by the getTypeData functions. */
+          * This field can also be set by the set<Type>Data functions and
+          * read by the get<Type>Data functions. */
         uint8_t data[8];
 
         CanMessage();
@@ -149,6 +151,9 @@ class CanMessage {
         void getData (char *data);
 };
 
+/**
+ * A class for managing the CAN driver.
+ */
 class CANClass {
 	public:
 		/**
@@ -164,7 +169,8 @@ class CANClass {
 
 		/**
          * Set operational mode.
-         * @param mode - One of the CAN_MODE enumerated values */
+         * @param mode - One of the enumerated mode values
+         * @see enum CAN_MODE */
 		static void setMode(uint8_t mode);
 
         /** Check whether a message may be sent */
