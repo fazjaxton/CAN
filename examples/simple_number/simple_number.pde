@@ -33,6 +33,7 @@ void loop()
   if (now > last + 1000) {
     last = now;
 
+    sendMessage.clear ();
     sendMessage.setIntData (i);
     sendMessage.send ();
     i++;

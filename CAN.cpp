@@ -19,33 +19,34 @@ CanMessage::CanMessage ()
     extended = 0;
     id = DEFAULT_CAN_ID;
     len = 0;
+    pos = 0;
 }
 
-void CanMessage::setByteData (byte b)
+void CanMessage::setByteData (byte val)
 {
-    len = 1;
-
-    data[0] = b;
+    if (this->len + sizeof(val) <= CAN_BYTES_MAX) {
+        this->data[this->len++] = val;
+    }
 }
 
-void CanMessage::setIntData (int i)
+void CanMessage::setIntData (int val)
 {
-    len = 2;
-
-	/* Big-endian network byte ordering */
-	data[0] = i >> 8;
-	data[1] = i & 0xff;
+    if (this->len + sizeof(val) <= CAN_BYTES_MAX) {
+        /* Big-endian network byte ordering */
+        this->data[this->len++] = (uint8_t)(val >> 8);
+        this->data[this->len++] = (uint8_t)(val);
+    }
 }
 
-void CanMessage::setLongData (long l)
+void CanMessage::setLongData (long val)
 {
-    len = 4;
-
-	/* Big-endian network byte ordering */
-	data[0] = (l >> 24) & 0xff;
-	data[1] = (l >> 16) & 0xff;
-	data[2] = (l >>  8) & 0xff;
-	data[3] = (l >>  0) & 0xff;
+    if (this->len + sizeof(val) <= CAN_BYTES_MAX) {
+        /* Big-endian network byte ordering */
+        this->data[this->len++] = (uint8_t)(val >> 24);
+        this->data[this->len++] = (uint8_t)(val >> 16);
+        this->data[this->len++] = (uint8_t)(val >> 8);
+        this->data[this->len++] = (uint8_t)(val);
+    }
 }
 
 void CanMessage::setData (const uint8_t *data, uint8_t len)
@@ -72,27 +73,37 @@ void CanMessage::send ()
 
 byte CanMessage::getByteFromData()
 {
-	return data[0];
+    byte val = 0;
+
+    if (this->pos + sizeof(val) <= this->len) {
+        val =  this->data[this->pos++];
+    }
+
+    return val;
 }
 
 int CanMessage::getIntFromData ()
 {
-    int val;
+    int val = 0;
 
-	val |= (uint16_t)data[0] << 8;
-	val |= (uint16_t)data[1] << 0;
+    if (this->pos + sizeof(val) <= this->len) {
+        val |= (int)(this->data[this->pos++]) << 8;
+        val |= (int)(this->data[this->pos++]);
+    }
 
 	return val;
 }
 
 long CanMessage::getLongFromData ()
 {
-    long val;
+    long val = 0;
 
-	val |= (uint32_t)data[0] << 24;
-	val |= (uint32_t)data[1] << 16;
-	val |= (uint32_t)data[2] <<  8;
-	val |= (uint32_t)data[3] <<  0;
+    if (this->pos + sizeof(val) <= this->len) {
+        val |= (long)(this->data[this->pos++]) << 24;
+        val |= (long)(this->data[this->pos++]) << 16;
+        val |= (long)(this->data[this->pos++]) << 8;
+        val |= (long)(this->data[this->pos++]);
+    }
 
 	return val;
 }
@@ -109,6 +120,12 @@ void CanMessage::getData (uint8_t *data)
 void CanMessage::getData (char *data)
 {
     getData ((uint8_t *)data);
+}
+
+void CanMessage::clear (void)
+{
+    this->len = 0;
+    this->pos = 0;
 }
 
 /*

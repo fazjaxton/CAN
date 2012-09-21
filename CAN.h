@@ -21,6 +21,7 @@
 #include "mcp2515.h"
 
 #define DEFAULT_CAN_ID	0x0555
+#define CAN_BYTES_MAX   8
 
 /** Operation Modes of the MCP2515 */
 enum CAN_MODE {
@@ -69,7 +70,7 @@ class CanMessage {
           * may be accessed directly to set or read the CAN message.
           * This field can also be set by the set<Type>Data functions and
           * read by the get<Type>Data functions. */
-        uint8_t data[8];
+        uint8_t data[CAN_BYTES_MAX];
 
         CanMessage();
 
@@ -149,6 +150,20 @@ class CanMessage {
          */
         void getData (uint8_t *data);
         void getData (char *data);
+
+        /**
+         * Clear message data so that a message variable can be reused.
+         * If you are using the "set" functions and using a CanMessage
+         * variable more than once, this method must be called to clear the
+         * data in the message before setting new data values.  It is not
+         * necessary to call this before receiving a message, as the received
+         * message completely replaces the old message.
+         */
+        void clear (void);
+
+    private:
+        /** The current position of reading/writing data out of the message */
+        uint8_t pos;
 };
 
 /**
