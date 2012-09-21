@@ -67,8 +67,8 @@ void CanMessage::setData (const char *data, uint8_t len)
 
 void CanMessage::send ()
 {
-	mcp2515_set_msg (0, id, data, len, extended);
-	mcp2515_request_tx (0);
+    mcp2515_set_msg (0, id, data, len, extended);
+    mcp2515_request_tx (0);
 }
 
 byte CanMessage::getByteFromData()
@@ -91,7 +91,7 @@ int CanMessage::getIntFromData ()
         val |= (int)(this->data[this->pos++]);
     }
 
-	return val;
+    return val;
 }
 
 long CanMessage::getLongFromData ()
@@ -105,7 +105,7 @@ long CanMessage::getLongFromData ()
         val |= (long)(this->data[this->pos++]);
     }
 
-	return val;
+    return val;
 }
 
 void CanMessage::getData (uint8_t *data)
@@ -132,12 +132,12 @@ void CanMessage::clear (void)
  * CANClass
  */
 void CANClass::begin(uint32_t bit_time) {
-	SPI.begin();
-	SPI.setDataMode(SPI_MODE0);
-	SPI.setBitOrder(MSBFIRST);
-	SPI.setClockDivider(SPI_CLOCK_DIV4);
+    SPI.begin();
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-	mcp2515_init (bit_time);
+    mcp2515_init (bit_time);
 }
 
 void CANClass::end() {
@@ -146,24 +146,24 @@ void CANClass::end() {
 
 void CANClass::setMode (uint8_t mode)
 {
-	mcp2515_set_mode (mode);
+    mcp2515_set_mode (mode);
 }
 
 uint8_t CANClass::ready ()
 {
-	return mcp2515_msg_sent ();
+    return mcp2515_msg_sent ();
 }
 
 boolean CANClass::available ()
 {
-	return (boolean)mcp2515_msg_received();
+    return (boolean)mcp2515_msg_received();
 }
 
 CanMessage CANClass::getMessage ()
 {
     CanMessage m;
 
-	m.extended = mcp2515_get_msg (0, &m.id, m.data, &m.len);
+    m.extended = mcp2515_get_msg (0, &m.id, m.data, &m.len);
 
     return m;
 }

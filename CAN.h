@@ -20,22 +20,22 @@
 #include <WProgram.h>
 #include "mcp2515.h"
 
-#define DEFAULT_CAN_ID	0x0555
-#define CAN_BYTES_MAX   8
+#define DEFAULT_CAN_ID          0x0555
+#define CAN_BYTES_MAX           8
 
 /** Operation Modes of the MCP2515 */
 enum CAN_MODE {
-	CAN_MODE_NORMAL, 		/**< Transmit and receive as normal */
-	CAN_MODE_SLEEP,			/**< Low power mode */
-	CAN_MODE_LOOPBACK,		/**< Test mode; any CAN messages sent are not
+    CAN_MODE_NORMAL,        /**< Transmit and receive as normal */
+    CAN_MODE_SLEEP,         /**< Low power mode */
+    CAN_MODE_LOOPBACK,      /**< Test mode; any CAN messages sent are not
                               *  transmitted on the CAN network, but instead
                               *  appear in the receive buffer as though they
                               *  were received from another CAN node. */
-	CAN_MODE_LISTEN_ONLY,   /**< Receive only; do not transmit or otherwise
+    CAN_MODE_LISTEN_ONLY,   /**< Receive only; do not transmit or otherwise
                               *  interact with the CAN network. */
-	CAN_MODE_CONFIG,		/**< Default; Allows writing to config registers */
+    CAN_MODE_CONFIG,        /**< Default; Allows writing to config registers */
 
-	CAN_MODE_COUNT
+    CAN_MODE_COUNT
 };
 
 /** Predefined CAN speeds - Included mostly for backward compatibility */
@@ -170,28 +170,28 @@ class CanMessage {
  * A class for managing the CAN driver.
  */
 class CANClass {
-	public:
-		/**
+    public:
+        /**
          * Call before using any other CAN functions.
          * @param bit_time - Desired width of a single bit in nanoseconds.
          *                   The CAN_SPEED enumerated values are set to
          *                   the bit widths of some common frequencies.
          */
-		static void begin(uint32_t bit_time);
+        static void begin(uint32_t bit_time);
 
-		/** Call when all CAN functions are complete */
-		static void end();
+        /** Call when all CAN functions are complete */
+        static void end();
 
-		/**
+        /**
          * Set operational mode.
          * @param mode - One of the enumerated mode values
          * @see enum CAN_MODE */
-		static void setMode(uint8_t mode);
+        static void setMode(uint8_t mode);
 
         /** Check whether a message may be sent */
         static uint8_t ready ();
 
-		/**
+        /**
          * Check whether received CAN data is available.
          * @return True if a message is available to be retrieved.
          */

@@ -281,11 +281,11 @@ uint8_t mcp2515_msg_received (void)
  */
 uint8_t mcp2515_msg_sent (void)
 {
-	uint8_t byte;
+    uint8_t byte;
 
-	mcp2515_read_regs (REG(TX, 0, CTRL), &byte, 1);
+    mcp2515_read_regs (REG(TX, 0, CTRL), &byte, 1);
 
-	return (!(byte & (1 << TXREQ)));
+    return (!(byte & (1 << TXREQ)));
 }
 
 void mcp2515_set_rx_mask (uint8_t mask_num, uint32_t mask, uint8_t extended)
