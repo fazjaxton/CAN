@@ -19,14 +19,7 @@ void loop()
 {
   if (CAN.available()) {
     message = CAN.getMessage ();
-    Serial.print (message.id, HEX);
-    Serial.print (":");
-
-    for (i=0; i<message.len; i++) {
-      Serial.print (' ');
-      Serial.print (message.data[i], HEX);
-    }
-    Serial.println ("");
+    message.print (HEX);
   }
 }
 
