@@ -128,6 +128,24 @@ void CanMessage::clear (void)
     this->pos = 0;
 }
 
+void CanMessage::print (uint8_t format)
+{
+    uint8_t i;
+
+    Serial.print (this->id, format);
+
+    Serial.print (" [");
+    Serial.print (len, DEC);
+    Serial.print ("]:");
+
+    for (i = 0; i < this->len; i++) {
+        Serial.print (" ");
+        Serial.print (this->data[i], format);
+    }
+
+    Serial.println ("");
+}
+
 /*
  * CANClass
  */

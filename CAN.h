@@ -161,6 +161,15 @@ class CanMessage {
          */
         void clear (void);
 
+        /**
+         * Print out the CAN message identifier, length and data bytes.
+         * This is useful for debugging programs or monitoring other
+         * CAN networks.
+         * @param format - An optional format specifier to be passed to the
+         *                 Arduino print funtion (e.g. HEX or DEC).
+         */
+        void print (uint8_t format = HEX);
+
     private:
         /** The current position of reading/writing data out of the message */
         uint8_t pos;
