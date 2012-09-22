@@ -9,9 +9,8 @@
 #ifndef __SPI_H__
 #define __SPI_H__
 
-/* Set to '1' if building CAN library for Arduino
- * '0' for a standalone C/C++ program */
-#define ARDUINO     1
+/* Remove this line if building outside the Arduino environment */
+#include <Arduino.h>
 
 #include <stdint.h>
 

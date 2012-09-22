@@ -16,6 +16,8 @@
 #ifndef CAN_h
 #define CAN_h
 
+#include "Arduino.h"
+
 #include <inttypes.h>
 #include <WProgram.h>
 #include "mcp2515.h"

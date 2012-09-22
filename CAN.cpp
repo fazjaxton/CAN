@@ -11,6 +11,7 @@
  * @file CAN.cpp
  * Arduino interface into the CAN driver.
  */
+#include "Arduino.h"
 #include "CAN.h"
 #include <SPI.h>
 
