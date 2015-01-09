@@ -1,6 +1,6 @@
-all:
-
 SOURCES=CAN.cpp CAN.h mcp2515.cpp mcp2515.h mcp2515_regs.h my_spi.h spi.cpp
+
+all: doc mainpage.dox
 
 doc: mainpage.dox doxyconfig $(SOURCES)
 	doxygen doxyconfig
